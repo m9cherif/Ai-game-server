@@ -1,12 +1,26 @@
 const express = require("express");
 const app = express();
 
+app.use(express.json());
+
+// 🌐 اختبار السيرفر
 app.get("/", (req, res) => {
-  res.send("🔥 Server is running correctly!");
+  res.send("🔥 Game Server is running!");
 });
 
-const PORT = process.env.PORT || 3000;
+// 🎮 استقبال بيانات اللاعب
+app.post("/score", (req, res) => {
+  const { playerName, kills } = req.body;
 
-app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
+  console.log("Player:", playerName, "Kills:", kills);
+
+  res.json({
+    message: "Score received ✅",
+    player: playerName,
+    kills: kills
+  });
+});
+
+app.listen(3000, () => {
+  console.log("Server started");
 });

@@ -7,7 +7,9 @@ app.use(express.json());
 function calculateScore(kills, deaths, accuracy) {
     return (kills * 10) + (accuracy * 20) - (deaths * 5);
 }
-
+app.get("/", (req, res) => {
+      res.send("🔥 Server is running perfectly!");
+})
 // 🎮 استقبال بيانات اللاعب
 app.post("/score", (req, res) => {
     const { playerName, kills, deaths, accuracy } = req.body;

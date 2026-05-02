@@ -3,24 +3,24 @@ const app = express();
 
 app.use(express.json());
 
-// 🌐 اختبار السيرفر
-app.get("/", (req, res) => {
-  res.send("🔥 Game Server is running!");
-});
+// 🧠 AI scoring function
+function calculateScore(kills, deaths, accuracy) {
+    return (kills * 10) + (accuracy * 20) - (deaths * 5);
+}
 
 // 🎮 استقبال بيانات اللاعب
 app.post("/score", (req, res) => {
-  const { playerName, kills } = req.body;
+    const { playerName, kills, deaths, accuracy } = req.body;
 
-  console.log("Player:", playerName, "Kills:", kills);
+    const score = calculateScore(kills, deaths, accuracy);
 
-  res.json({
-    message: "Score received ✅",
-    player: playerName,
-    kills: kills
-  });
+    console.log(playerName, score);
+
+    res.json({
+        player: playerName,
+        score: score,
+        message: "AI score calculated 🔥"
+    });
 });
 
-app.listen(3000, () => {
-  console.log("Server started");
-});
+app.listen(3000, () => console.log("Server running"));

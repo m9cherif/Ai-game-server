@@ -1,28 +1,55 @@
 const express = require("express");
 const app = express();
+const { createClient } = require("@supabase/supabase-js");
 
 app.use(express.json());
 
-// 🧠 AI scoring function
-function calculateScore(kills, deaths, accuracy) {
-    return (kills * 10) + (accuracy * 20) - (deaths * 5);
-}
-app.get("/", (req, res) => {
-      res.send("🔥 Server is running perfectly!");
-})
-// 🎮 استقبال بيانات اللاعب
-app.post("/score", (req, res) => {
-    const { playerName, kills, deaths, accuracy } = req.body;
+// 🔗 Supabase
+const supabase = createClient(
+  "YOUR_SUPABASE_URL",
+    "YOUR_SUPABASE_KEY"
+    );
 
-    const score = calculateScore(kills, deaths, accuracy);
+    // 🟢 Route رئيسية
+    app.get("/", (req, res) => {
+      res.send("🔥 Game Server Running");
+      });
 
-    console.log(playerName, score);
+      // 🧠 AI Score
+      function calculateScore(kills, deaths, accuracy) {
+        return (kills * 10) + (accuracy * 20) - (deaths * 5);
+        }
 
-    res.json({
-        player: playerName,
-        score: score,
-        message: "AI score calculated 🔥"
-    });
-});
+        // 🎮 استقبال بيانات اللاعب
+        app.post("/score", async (req, res) => {
+          const { playerName, kills, deaths, accuracy } = req.body;
 
-app.listen(3000, () => console.log("Server running"));
+            const score = calculateScore(kills, deaths, accuracy);
+
+              // 🗄️ تخزين في leaderboard
+                await supabase.from("leaderboard").insert([
+                    {
+                          player: playerName,
+                                score: score
+                                    }
+                                      ]);
+
+                                        res.json({
+                                            player: playerName,
+                                                score: score,
+                                                    message: "Saved + AI calculated 🔥"
+                                                      });
+                                                      });
+
+                                                      // 🏆 leaderboard
+                                                      app.get("/leaderboard", async (req, res) => {
+                                                        const { data } = await supabase
+                                                            .from("leaderboard")
+                                                                .select("*")
+                                                                    .order("score", { ascending: false })
+                                                                        .limit(10);
+
+                                                                          res.json(data);
+                                                                          });
+
+                                                                          app.listen(3000, () => console.log("Server running"));

@@ -2,9 +2,11 @@ const express = require("express");
 const app = express();
 
 app.get("/", (req, res) => {
-  res.send("🔥 Game Server is running!");
+  res.send("🔥 Server is running correctly!");
 });
 
-app.listen(3000, () => {
-  console.log("Server started");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT);
 });

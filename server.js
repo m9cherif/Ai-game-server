@@ -4,52 +4,31 @@ const { createClient } = require("@supabase/supabase-js");
 
 app.use(express.json());
 
-// 🔗 Supabase
 const supabase = createClient(
   "YOUR_SUPABASE_URL",
     "YOUR_SUPABASE_KEY"
     );
-
-    // 🟢 Route رئيسية
     app.get("/", (req, res) => {
-      res.send("🔥 Game Server Running");
+      res.send("🔥 Server OK");
       });
 
-      // 🧠 AI Score
-      function calculateScore(kills, deaths, accuracy) {
-        return (kills * 10) + (accuracy * 20) - (deaths * 5);
-        }
+      app.post("/score", async (req, res) => {
+        try {
+            const { playerName, kills, deaths, accuracy } = req.body;
 
-        // 🎮 استقبال بيانات اللاعب
-        app.post("/score", async (req, res) => {
-          const { playerName, kills, deaths, accuracy } = req.body;
+                const score = (kills * 10) + (accuracy * 20) - (deaths * 5);
 
-            const score = calculateScore(kills, deaths, accuracy);
+                    await supabase.from("leaderboard").insert([
+                          { player: playerName, score }
+                              ]);
 
-              // 🗄️ تخزين في leaderboard
-                await supabase.from("leaderboard").insert([
-                    {
-                          player: playerName,
-                                score: score
-                                    }
-                                      ]);
+                                  res.json({ playerName, score });
 
-                                        res.json({
-                                            player: playerName,
-                                                score: score,
-                                                    message: "Saved + AI calculated 🔥"
-                                                      });
-                                                      });
+                                    } catch (err) {
+                                        console.error(err);
+                                            res.status(500).send("Error");
+                                              }
+                                              });
 
-                                                      // 🏆 leaderboard
-                                                      app.get("/leaderboard", async (req, res) => {
-                                                        const { data } = await supabase
-                                                            .from("leaderboard")
-                                                                .select("*")
-                                                                    .order("score", { ascending: false })
-                                                                        .limit(10);
-
-                                                                          res.json(data);
-                                                                          });
-
-                                                                          app.listen(3000, () => console.log("Server running"));
+                                              const PORT = process.env.PORT || 3000;
+                                              app.listen(PORT, () => console.log("Running..."));

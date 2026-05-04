@@ -32,3 +32,25 @@ const supabase = createClient(
 
                                               const PORT = process.env.PORT || 3000;
                                               app.listen(PORT, () => console.log("Running..."));
+app.post("/score", async (req, res) => {
+  try {
+    const { playerName, kills } = req.body;
+
+    const score = kills * 10;
+
+    const { error } = await supabase
+      .from("leaderboard")
+      .insert([{ player: playerName, score }]);
+
+    if (error) {
+      console.log(error);
+      return res.status(500).send("DB error");
+    }
+
+    res.json({ playerName, score });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server error");
+  }
+});

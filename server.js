@@ -5,8 +5,8 @@ const { createClient } = require("@supabase/supabase-js");
 app.use(express.json());
 
 const supabase = createClient(
-  "YOUR_SUPABASE_URL",
-    "YOUR_SUPABASE_KEY"
+  "https://wpcnlaugoyrzxwolayzx.supabase.co",
+    "sb_publishable_EJ4zT90Fl1fV1sj7kCvkFQ_QvaedcTw"
     );
     app.get("/", (req, res) => {
       res.send("🔥 Server OK");

@@ -16,7 +16,7 @@ const supabase = createClient(
         try {
             const { playerName, kills, deaths, accuracy } = req.body;
 
-                const score = (kills * 10);
+                const score = (kills * 10) + (accuracy * 20) - (deaths * 5);
 
                     await supabase.from("leaderboard").insert([
                           { player: playerName, score }

@@ -54,3 +54,20 @@ app.post("/score", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
+app.get("/leaderboard", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("leaderboard")
+      .select("*")
+      .order("score", { ascending: false });
+
+    if (error) {
+      return res.status(500).send(error.message);
+    }
+
+    res.json(data);
+
+  } catch (err) {
+    res.status(500).send("Server error");
+  }
+});

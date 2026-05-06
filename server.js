@@ -511,3 +511,25 @@ app.delete("/api/players/:id", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+app.delete("/api/players/:id", async (req, res) => {
+  const { id } = req.params;
+
+  // نجيب اللاعب الأول
+  const { data } = await supabase
+    .from("leaderboard")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (data.is_admin) {
+    return res.status(403).send("Cannot delete admin");
+  }
+
+  // delete عادي
+  await supabase
+    .from("leaderboard")
+    .delete()
+    .eq("id", id);
+
+  res.send("Deleted");
+});
